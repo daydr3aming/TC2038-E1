@@ -4,6 +4,8 @@
 #include <fstream>
 #include <vector>
 
+// Actividad Integradora: A01639914 y A01633817
+
 int main(){
     std::fstream transmission1file("transmission1.txt");
     std::fstream transmission2file("transmission2.txt");

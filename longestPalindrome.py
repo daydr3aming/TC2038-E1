@@ -22,7 +22,7 @@ def matchPalindrome(string, lsp):
     indexpal = lsp.index(max(lsp))
     return string[indexpal-lsp[indexpal]:indexpal+lsp[indexpal]+1]
    
-# Driver program
+# Programa principal
 string = "abacabacabb"
 lsp = longestPalindrome(string)
 print(f"Longest palindrome: {matchPalindrome(string, lsp)}")
