@@ -33,70 +33,67 @@ void ArregloLPS(char const* patron, int size, int *arreglo){ // arreglo
 }
 
 
-void KMPSearch(char const* patron, char const* palabra, int m, int t){
-    int M = strlen(patron);
-    int N = strlen(palabra);
+void KMPSearch(std::vector<std::string> mcode, std::string transmission, int t, int m){
+    const int length =  transmission.length();
+    char* tranPalabra = new char[length + 1];
+    strcpy(tranPalabra,  transmission.c_str());
 
-    int lpsArr[M];
+    int N = strlen(tranPalabra);
 
-    ArregloLPS(patron, M, lpsArr);
+    int contador = 0;
 
-    int i = 0;
-    int j = 0;
-    while(i < N){
-        if(patron[j] == palabra[i]){
-            j++;
-            i++;
-        }
-
-        if(j == M){
-            printf("True, transmission %d con mcode %d : patron en el indice: %d \n", t, m, i-j);
-            j = lpsArr[j-1];
-
-        }
-        else if( i < N && patron[j]!= palabra[i]){
-
-            if( j != 0){
-                j = lpsArr[j-1];
-            }
-            else{
-                i = i + 1;
-            }
-        }
-    }
-}
-
-void parte1(std::vector<std::string> mcode, std::vector<std::string> transmission, int tNumber, int mNumber){
-
-
-
-    for(int i=0; i<transmission.size(); i++){
-
-        const int length =  transmission[i].length();
-        char* tranPalabra = new char[length + 1];
-        strcpy(tranPalabra,  transmission[i].c_str());
-
-
-        for(int j=0; j< mcode.size(); j++){
+    for(int l=0; l< mcode.size(); l++){
             
-            const int length2 =  mcode[j].length();
-            char* mcodePalabra = new char[length2 + 1];
-            strcpy(mcodePalabra,  mcode[j].c_str());
+        const int length2 =  mcode[l].length();
+        char* mcodePalabra = new char[length2 + 1];
+        strcpy(mcodePalabra,  mcode[l].c_str());
 
+        int M = strlen(mcodePalabra);
 
-            // Aqui ya tenemos en variables, la palabra de transmission y mcode, solo falta comparar
+        int lpsArr[M];
 
-  
-            KMPSearch(mcodePalabra, tranPalabra, mNumber, tNumber);
+        ArregloLPS(mcodePalabra, M, lpsArr);
 
+        int i = 0;
+        int j = 0;
+        
 
-            delete[] mcodePalabra;
+        while(i < N){
+            if(mcodePalabra[j] == tranPalabra[i]){
+                j++;
+                i++;
+            }
+
+            if(j == M){
+                std::cout<<"True el archivo transmission"<<t<<".txt contiene el codigo ";
+                for(int i=0; i<M; i++){
+                    std::cout<<mcodePalabra[i];
+                }
+                std::cout<<" contenido en el archivo mcode"<<m<<".txt en el indice "<< i-j<<std::endl;
+                contador++;
+                j = lpsArr[j-1];
+
+            }
+            else if( i < N && mcodePalabra[j]!= tranPalabra[i]){
+
+                if( j != 0){
+                    j = lpsArr[j-1];
+                }
+                else{
+                    i = i + 1;
+                }
+            }
         }
+        
 
-        delete[] tranPalabra;
+        delete[] mcodePalabra;
     }
-
+    if(contador == 0){
+            std::cout<<"False el archivo transmission"<<t<<".txt no contiene el codigo contenido en el archivo mcode"<<m<<".txt "<<std::endl;
+        }
+    delete[] tranPalabra;
 }
+
 
 int main(){
     std::fstream transmission1file("transmission1.txt");
@@ -114,9 +111,8 @@ int main(){
 
 
     std::string line;
-    std::vector<std::string> transmission1;
-    std::vector<std::string> transmission2;
-    std::vector<std::string> transmission3;
+    std::string transmission1;
+    std::string transmission2;
     std::vector<std::string> mcode1;
     std::vector<std::string> mcode2;
     std::vector<std::string> mcode3;
@@ -126,10 +122,10 @@ int main(){
 
         while(getline(file, line)){
             if(i == 0){
-                transmission1.push_back(line);
+                transmission1 += line;
             }
             else if(i == 1){
-                transmission2.push_back(line);
+                transmission2 += line;
             }
             else if(i == 2){
                 mcode1.push_back(line);
@@ -143,32 +139,19 @@ int main(){
         }
     }
 
-    /*
-    std::cout << "tranmission1: " << std::endl;
-    std::cout << transmission1 << std::endl;
-    std::cout << "tranmission2: " << std::endl;
-    std::cout << transmission2 << std::endl;
-    std::cout << "mcode1: " << std::endl;
-    std::cout << mcode1 << std::endl;
-    std::cout << "mcode2: " << std::endl;
-    std::cout << mcode2 << std::endl;
-    std::cout << "mcode3: " << std::endl;
-    std::cout << mcode3 << std::endl;
-*/
 
 
-   // parte1(mcode1, transmission1, 1, 1);
-    //parte1(mcode2, transmission1, 1, 2);
+    // Pruebas 
+
+    KMPSearch(mcode1, transmission1, 1, 1);
+    KMPSearch(mcode2, transmission1, 1, 2);
+    KMPSearch(mcode3, transmission1, 1, 3);
+    KMPSearch(mcode1, transmission2, 2, 1);
+    KMPSearch(mcode2, transmission2, 2, 2);
+    KMPSearch(mcode3, transmission2, 2, 3);
 
 
-    parte1(mcode3, transmission1, 1, 3);
-    /*
-    parte1(mcode1, transmission2, 2, 1);
-    parte1(mcode2, transmission2, 2, 2);
-    parte1(mcode3, transmission2, 2, 3);
-    */
 
-    //KMPSearch("znxc1m34", "znxc1m34jn413asd", 1,1);
     
     transmission1file.close();
     transmission2file.close(); 
