@@ -1,10 +1,99 @@
 #include <stdio.h>
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <fstream>
 #include <vector>
+#include <string.h>
 
 // Actividad Integradora: A01639914 y A01633817
+
+
+void ArregloLPS(char const* patron, int size, int *arreglo){ // arreglo
+    int len = 0;
+    arreglo[0] = 0;
+    int i = 1;
+
+    while(i<size){
+        if(patron[i]==patron[len]){
+            len++;
+            arreglo[i] = len;
+            i++;
+        }
+        else{
+            if(len != 0 ){
+                len = arreglo[len - 1];
+            }
+            else{
+                arreglo[i] = 0;
+                i++;
+            }
+        }
+    }
+}
+
+
+void KMPSearch(std::vector<std::string> mcode, std::string transmission, int t, int m){
+    const int length =  transmission.length();
+    char* tranPalabra = new char[length + 1];
+    strcpy(tranPalabra,  transmission.c_str());
+
+    int N = strlen(tranPalabra);
+
+    int contador = 0;
+
+    for(int l=0; l< mcode.size(); l++){
+            
+        const int length2 =  mcode[l].length();
+        char* mcodePalabra = new char[length2 + 1];
+        strcpy(mcodePalabra,  mcode[l].c_str());
+
+        int M = strlen(mcodePalabra);
+
+        int lpsArr[M];
+
+        ArregloLPS(mcodePalabra, M, lpsArr);
+
+        int i = 0;
+        int j = 0;
+        
+
+        while(i < N){
+            if(mcodePalabra[j] == tranPalabra[i]){
+                j++;
+                i++;
+            }
+
+            if(j == M){
+                std::cout<<"True el archivo transmission"<<t<<".txt contiene el codigo ";
+                for(int i=0; i<M; i++){
+                    std::cout<<mcodePalabra[i];
+                }
+                std::cout<<" contenido en el archivo mcode"<<m<<".txt en el indice "<< i-j<<std::endl;
+                contador++;
+                j = lpsArr[j-1];
+
+            }
+            else if( i < N && mcodePalabra[j]!= tranPalabra[i]){
+
+                if( j != 0){
+                    j = lpsArr[j-1];
+                }
+                else{
+                    i = i + 1;
+                }
+            }
+        }
+        
+
+        delete[] mcodePalabra;
+    }
+    if(contador == 0){
+            std::cout<<"False el archivo transmission"<<t<<".txt no contiene el codigo contenido en el archivo mcode"<<m<<".txt "<<std::endl;
+        }
+    delete[] tranPalabra;
+}
+
 
 int main(){
     std::fstream transmission1file("transmission1.txt");
@@ -24,49 +113,56 @@ int main(){
     std::string line;
     std::string transmission1;
     std::string transmission2;
-    std::string transmission3;
-    std::string mcode1;
-    std::string mcode2;
-    std::string mcode3;
-
+    std::vector<std::string> mcode1;
+    std::vector<std::string> mcode2;
+    std::vector<std::string> mcode3;
 
     for(int i = 0; i < allfiles.size(); i++){
         std::fstream file(allfiles[i] + ".txt");
+
         while(getline(file, line)){
             if(i == 0){
-                transmission1 += line + "\n";
+                transmission1 += line;
             }
             else if(i == 1){
-                transmission2 += line + "\n";
+                transmission2 += line;
             }
             else if(i == 2){
-                mcode1 += line + "\n";
+                mcode1.push_back(line);
             }
             else if(i == 3){
-                mcode2 += line + "\n";
+                mcode2.push_back(line);
             }
             else if(i == 4){
-                mcode3 += line + "\n";
+                mcode3.push_back(line);
             }
         }
     }
 
-    std::cout << "tranmission1: " << std::endl;
-    std::cout << transmission1 << std::endl;
-    std::cout << "tranmission2: " << std::endl;
-    std::cout << transmission2 << std::endl;
-    std::cout << "mcode1: " << std::endl;
-    std::cout << mcode1 << std::endl;
-    std::cout << "mcode2: " << std::endl;
-    std::cout << mcode2 << std::endl;
-    std::cout << "mcode3: " << std::endl;
-    std::cout << mcode3 << std::endl;
+
+
+    // Pruebas 
+
+    KMPSearch(mcode1, transmission1, 1, 1);
+    KMPSearch(mcode2, transmission1, 1, 2);
+    KMPSearch(mcode3, transmission1, 1, 3);
+    KMPSearch(mcode1, transmission2, 2, 1);
+    KMPSearch(mcode2, transmission2, 2, 2);
+    KMPSearch(mcode3, transmission2, 2, 3);
+
+
+
     
     transmission1file.close();
     transmission2file.close(); 
     mcode1file.close();
     mcode2file.close();
     mcode3file.close();
+
+
+
+
+
     return 0;
 }
  
