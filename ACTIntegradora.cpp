@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <string.h>
+#include <algorithm>
 
 // Actividad Integradora: A01639914 y A01633817
 
@@ -65,7 +66,7 @@ void KMPSearch(std::vector<std::string> mcode, std::string transmission, int t, 
             }
 
             if(j == M){
-                std::cout<<"True el archivo transmission"<<t<<".txt contiene el codigo ";
+                std::cout<<"True el archivo transmission"<<t<<".txt si contiene el codigo ";
                 for(int i=0; i<M; i++){
                     std::cout<<mcodePalabra[i];
                 }
@@ -92,6 +93,27 @@ void KMPSearch(std::vector<std::string> mcode, std::string transmission, int t, 
             std::cout<<"False el archivo transmission"<<t<<".txt no contiene el codigo contenido en el archivo mcode"<<m<<".txt "<<std::endl;
         }
     delete[] tranPalabra;
+}
+
+void longestPalindrome(std::string transmission, std::vector<int> &a){
+    int n = transmission.length();
+    int r = -1;
+    int p = -1;
+    for(int i = 0; i < n -1; i++){
+        if(i <= r){
+            a[i] = (std::min(a[2*p - i], r - i));
+        }
+        else{
+            a[i] = 0;
+        }
+        while(i - a[i]-1 >= 0 && i+a[i] + 1 < n && transmission[i - a[i] - 1] == transmission[i + a[i] + 1]){
+            a[i] = a[i] + 1;
+        }
+        if(i+a[i] > r){
+            r = i + a[i];
+            p = i;
+        }
+    }
 }
 
 
@@ -150,8 +172,21 @@ int main(){
     KMPSearch(mcode2, transmission2, 2, 2);
     KMPSearch(mcode3, transmission2, 2, 3);
 
+    std::vector<int> a(transmission1.length());
+    std::vector<int> b(transmission2.length());
+
+    longestPalindrome(transmission1, a);
+    longestPalindrome(transmission2, b);
 
 
+    // Parte 2 terminada
+    std::cout << "transmission 1: " << std::endl;
+    int index = std::max_element(a.begin(), a.end()) - a.begin();
+    std::cout << (index-a[index])+1 << " " << (index+a[index])+1  << std::endl;
+
+    std::cout << "transmission 2:  " << std::endl;
+    index = std::max_element(b.begin(), b.end()) - b.begin();
+    std::cout << (index-b[index]) + 1 << " " << (index+b[index]) + 1 << std::endl;
     
     transmission1file.close();
     transmission2file.close(); 
