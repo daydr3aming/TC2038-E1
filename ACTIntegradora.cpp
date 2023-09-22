@@ -117,6 +117,71 @@ void longestPalindrome(std::string transmission, std::vector<int> &a){
 }
 
 
+void LCS(std::string transmission1, std::string transmission2){
+    // cambiamos los strings a chars
+
+    const int length =  transmission1.length(); // Transmission1
+    char* tran1 = new char[length + 1];
+    strcpy(tran1,  transmission1.c_str());
+
+    const int length2 =  transmission2.length(); // Transmission2
+    char* tran2 = new char[length2 + 1];
+    strcpy(tran2,  transmission2.c_str());
+
+    std::cout<<"DONE A CHAR"<<std::endl;
+    
+    int M = strlen(tran1);
+    int N = strlen(tran2);
+
+    std::cout<<"M"<<M<<std::endl;
+    std::cout<<"N"<<N<<std::endl;
+
+    int LongestCS[M + 1][N + 1];
+
+    int longitud = 0;
+    int row, col;
+
+    for(int i =0; i<= M; i++){
+        for(int j= 0; j<= N; j++){
+
+            if(i == 0 || j ==0){
+                LongestCS[i][j] = 0;
+
+            }
+            else if(tran1[i-1] == tran2[j-1]){
+                LongestCS[i][j] = LongestCS[i-1][j-1] + 1;
+
+                if(longitud < LongestCS[i][j] ){
+                    longitud = LongestCS[i][j];
+                    row = i;
+                    col = j;
+                }
+            }
+            else{
+                LongestCS[i][j]= 0;
+            }
+        }
+    }
+
+
+    int posFinal = row; // Para empezar en 1
+
+    while (LongestCS[row][col] != 0) {
+        row--;
+        col--;
+    }
+    int posInicial = row+1; // Para empezar en 1
+
+
+    std::cout<<"Posicion Inicial: "<<posInicial<<"  Posicion Final: "<<posFinal<<" del substring comun mas largo entre archivos de transmision (de transmission 1, primer archivo)"<<std::endl;
+
+    
+    delete tran1;
+    delete tran2;
+
+}
+
+
 int main(){
     std::fstream transmission1file("transmission1.txt");
     std::fstream transmission2file("transmission2.txt");
@@ -164,7 +229,9 @@ int main(){
 
 
     // Pruebas 
+    /*
 
+    // Parte 1 terminada
     KMPSearch(mcode1, transmission1, 1, 1);
     KMPSearch(mcode2, transmission1, 1, 2);
     KMPSearch(mcode3, transmission1, 1, 3);
@@ -187,6 +254,15 @@ int main(){
     std::cout << "transmission 2:  " << std::endl;
     index = std::max_element(b.begin(), b.end()) - b.begin();
     std::cout << (index-b[index]) + 1 << " " << (index+b[index]) + 1 << std::endl;
+
+*/
+ 
+
+    LCS(transmission1,transmission2);
+
+
+
+
     
     transmission1file.close();
     transmission2file.close(); 
