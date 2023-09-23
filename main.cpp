@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <string.h>
+#include <algorithm>
 
 // Actividad Integradora: A01639914 y A01633817
 
@@ -65,11 +66,11 @@ void KMPSearch(std::vector<std::string> mcode, std::string transmission, int t, 
             }
 
             if(j == M){
-                std::cout<<"True el archivo transmission"<<t<<".txt contiene el codigo ";
+                std::cout<<"True el archivo transmission"<<t<<".txt si contiene el codigo ";
                 for(int i=0; i<M; i++){
                     std::cout<<mcodePalabra[i];
                 }
-                std::cout<<" contenido en el archivo mcode"<<m<<".txt en el indice "<< i-j<<std::endl;
+                std::cout<<" contenido en el archivo mcode"<<m<<".txt en el indice "<< (i-j) + 1<<std::endl;
                 contador++;
                 j = lpsArr[j-1];
 
@@ -92,6 +93,87 @@ void KMPSearch(std::vector<std::string> mcode, std::string transmission, int t, 
             std::cout<<"False el archivo transmission"<<t<<".txt no contiene el codigo contenido en el archivo mcode"<<m<<".txt "<<std::endl;
         }
     delete[] tranPalabra;
+}
+
+void longestPalindrome(std::string transmission, std::vector<int> &a){
+    int n = transmission.length();
+    int r = -1;
+    int p = -1;
+    for(int i = 0; i < n -1; i++){
+        if(i <= r){
+            a[i] = (std::min(a[2*p - i], r - i));
+        }
+        else{
+            a[i] = 0;
+        }
+        while(i - a[i]-1 >= 0 && i+a[i] + 1 < n && transmission[i - a[i] - 1] == transmission[i + a[i] + 1]){
+            a[i] = a[i] + 1;
+        }
+        if(i+a[i] > r){
+            r = i + a[i];
+            p = i;
+        }
+    }
+}
+
+
+void LCS(std::string transmission1, std::string transmission2){
+    // cambiamos los strings a chars
+
+    const int length =  transmission1.length(); // Transmission1
+    char* tran1 = new char[length + 1];
+    strcpy(tran1,  transmission1.c_str());
+
+    const int length2 =  transmission2.length(); // Transmission2
+    char* tran2 = new char[length2 + 1];
+    strcpy(tran2,  transmission2.c_str());
+
+    int M = strlen(tran1);
+    int N = strlen(tran2);
+
+    int LongestCS[M + 1][N + 1];
+
+    int longitud = 0;
+    int row, col;
+
+    for(int i =0; i<= M; i++){
+        for(int j= 0; j<= N; j++){
+
+            if(i == 0 || j ==0){
+                LongestCS[i][j] = 0;
+
+            }
+            else if(tran1[i-1] == tran2[j-1]){
+                LongestCS[i][j] = LongestCS[i-1][j-1] + 1;
+
+                if(longitud < LongestCS[i][j] ){
+                    longitud = LongestCS[i][j];
+                    row = i;
+                    col = j;
+                }
+            }
+            else{
+                LongestCS[i][j]= 0;
+            }
+        }
+    }
+
+
+    int posFinal = row; // Para empezar en 1
+
+    while (LongestCS[row][col] != 0) {
+        row--;
+        col--;
+    }
+    int posInicial = row+1; // Para empezar en 1
+
+
+    std::cout<<"Posicion Inicial: "<<posInicial<<"  Posicion Final: "<<posFinal<<" del substring comun mas largo entre archivos de transmision (de transmission 1, primer archivo)"<<std::endl;
+
+    
+    delete tran1;
+    delete tran2;
+
 }
 
 
@@ -143,6 +225,7 @@ int main(){
 
     // Pruebas 
 
+    // Parte 1 terminada
     KMPSearch(mcode1, transmission1, 1, 1);
     KMPSearch(mcode2, transmission1, 1, 2);
     KMPSearch(mcode3, transmission1, 1, 3);
@@ -150,18 +233,31 @@ int main(){
     KMPSearch(mcode2, transmission2, 2, 2);
     KMPSearch(mcode3, transmission2, 2, 3);
 
+    std::vector<int> a(transmission1.length());
+    std::vector<int> b(transmission2.length());
+
+    longestPalindrome(transmission1, a);
+    longestPalindrome(transmission2, b);
 
 
-    
+    // Parte 2 terminada
+    std::cout << "transmission 1: " << std::endl;
+    int index = std::max_element(a.begin(), a.end()) - a.begin();
+    std::cout << (index-a[index])+1 << " " << (index+a[index])+1  << std::endl;
+
+    std::cout << "transmission 2:  " << std::endl;
+    index = std::max_element(b.begin(), b.end()) - b.begin();
+    std::cout << (index-b[index]) + 1 << " " << (index+b[index]) + 1 << std::endl;
+
+    // Parte 3 terminada
+
+    LCS(transmission1,transmission2);
+
     transmission1file.close();
     transmission2file.close(); 
     mcode1file.close();
     mcode2file.close();
     mcode3file.close();
-
-
-
-
 
     return 0;
 }
