@@ -70,7 +70,7 @@ void KMPSearch(std::vector<std::string> mcode, std::string transmission, int t, 
                 for(int i=0; i<M; i++){
                     std::cout<<mcodePalabra[i];
                 }
-                std::cout<<" contenido en el archivo mcode"<<m<<".txt en el indice "<< i-j<<std::endl;
+                std::cout<<" contenido en el archivo mcode"<<m<<".txt en el indice "<< (i-j) + 1<<std::endl;
                 contador++;
                 j = lpsArr[j-1];
 
@@ -128,13 +128,8 @@ void LCS(std::string transmission1, std::string transmission2){
     char* tran2 = new char[length2 + 1];
     strcpy(tran2,  transmission2.c_str());
 
-    std::cout<<"DONE A CHAR"<<std::endl;
-    
     int M = strlen(tran1);
     int N = strlen(tran2);
-
-    std::cout<<"M"<<M<<std::endl;
-    std::cout<<"N"<<N<<std::endl;
 
     int LongestCS[M + 1][N + 1];
 
@@ -229,7 +224,6 @@ int main(){
 
 
     // Pruebas 
-    /*
 
     // Parte 1 terminada
     KMPSearch(mcode1, transmission1, 1, 1);
@@ -255,24 +249,15 @@ int main(){
     index = std::max_element(b.begin(), b.end()) - b.begin();
     std::cout << (index-b[index]) + 1 << " " << (index+b[index]) + 1 << std::endl;
 
-*/
- 
+    // Parte 3 terminada
 
     LCS(transmission1,transmission2);
 
-
-
-
-    
     transmission1file.close();
     transmission2file.close(); 
     mcode1file.close();
     mcode2file.close();
     mcode3file.close();
-
-
-
-
 
     return 0;
 }
